@@ -7,6 +7,7 @@ public class GenerationOptions
     public NamingConvention NamingConvention { get; set; } = NamingConvention.PascalCase;
     public AttributeStyle AttributeStyle { get; set; } = AttributeStyle.SystemTextJson;
     public bool GenerateAsRecord { get; set; } = false;
+    public bool UsePreciseTypes { get; set; } = false;
 }
 
 public enum NamingConvention { PascalCase, CamelCase }
