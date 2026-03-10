@@ -503,4 +503,64 @@ public class JsonToCsharpConverterTests
         Assert.Contains("public class Address", result.Output);
         Assert.Contains("public class Address2", result.Output);
     }
+
+    [Fact]
+    public void Convert_AttributeStyleNone_ButNameWasSanitized_StillEmitsAttribute()
+    {
+        var options = new GenerationOptions { AttributeStyle = AttributeStyle.None };
+        var result = _converter.Convert("""{"first-name": "John"}""", options);
+
+        Assert.True(result.Success);
+
+        Assert.Contains("JsonPropertyName", result.Output);
+    }
+
+    [Fact]
+    public void Convert_AttributeStyleNone_CleanName_NoAttributeEmitted()
+    {
+        var options = new GenerationOptions { AttributeStyle = AttributeStyle.None };
+        var result = _converter.Convert("""{"name": "John"}""", options);
+
+        Assert.True(result.Success);
+
+        Assert.DoesNotContain("JsonPropertyName", result.Output);
+    }
+
+    [Fact]
+    public void Convert_GenerateAsRecord_UsesInitAccessor()
+    {
+        var options = new GenerationOptions { GenerateAsRecord = true };
+        var result = _converter.Convert("""{"name": "John"}""", options);
+
+        Assert.True(result.Success);
+        Assert.Contains("get; init;", result.Output);
+        Assert.DoesNotContain("get; set;", result.Output);
+    }
+
+    [Fact]
+    public void Convert_SystemTextJsonStyle_PrependsUsingDirective()
+    {
+        var options = new GenerationOptions { AttributeStyle = AttributeStyle.SystemTextJson };
+        var result = _converter.Convert("""{"name": "John"}""", options);
+        Assert.True(result.Success);
+        Assert.StartsWith("using System.Text.Json.Serialization;", result.Output);
+    }
+
+    [Fact]
+    public void Convert_NewtonsoftStyle_PrependsNewtonsoftUsing()
+    {
+        var options = new GenerationOptions { AttributeStyle = AttributeStyle.Newtonsoft };
+        var result = _converter.Convert("""{"name": "John"}""", options);
+        Assert.True(result.Success);
+        Assert.StartsWith("using Newtonsoft.Json;", result.Output);
+    }
+
+    [Fact]
+    public void Convert_AttributeStyleNone_NoUsingDirective()
+    {
+        var options = new GenerationOptions { AttributeStyle = AttributeStyle.None };
+        var result = _converter.Convert("""{"name": "John"}""", options);
+        Assert.True(result.Success);
+        Assert.DoesNotContain("using ", result.Output);
+    }
 }

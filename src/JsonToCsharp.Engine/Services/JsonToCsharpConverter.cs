@@ -22,7 +22,7 @@ public class JsonToCsharpConverter : IJsonToCsharpConverter
             {
                 case JTokenType.Object:
                     GenerateClass((JObject)token, options.RootClassName, options, collector);
-                    return ConversionResult.Ok(collector.BuildOutput());
+                    return ConversionResult.Ok(PrependUsings(collector.BuildOutput(), options));
 
                 case JTokenType.Array:
                     var array = (JArray)token;
@@ -75,7 +75,7 @@ public class JsonToCsharpConverter : IJsonToCsharpConverter
                      Environment.NewLine +
                      $"// Root type: List<{className}>";
 
-        return ConversionResult.Ok(output);
+        return ConversionResult.Ok(PrependUsings(output, options));
     }
 
     // -------------------------------------------------------------------------
@@ -148,7 +148,7 @@ public class JsonToCsharpConverter : IJsonToCsharpConverter
                     inferredProp, options);
             }
 
-            var nameWasChanged = propertyName != jsonName;
+            var nameWasChanged = !string.Equals(propertyName, jsonName, StringComparison.OrdinalIgnoreCase);
             var attributeRequested = options.AttributeStyle != AttributeStyle.None;
 
             if (nameWasChanged || attributeRequested)
@@ -157,7 +157,8 @@ public class JsonToCsharpConverter : IJsonToCsharpConverter
             if (comment != null)
                 sb.AppendLine($"    {comment}");
 
-            sb.AppendLine($"    public {csharpType} {propertyName} {{ get; set; }}");
+            var accessor = options.GenerateAsRecord ? "get; init;" : "get; set;";
+            sb.AppendLine($"    public {csharpType} {propertyName} {{ {accessor} }}");
             sb.AppendLine();
         }
 
@@ -265,9 +266,22 @@ public class JsonToCsharpConverter : IJsonToCsharpConverter
         return style switch
         {
             AttributeStyle.Newtonsoft =>
-                $"    [Newtonsoft.Json.JsonProperty(\"{jsonName}\")]",
+                $"    [JsonProperty(\"{jsonName}\")]",
             _ =>
-                $"    [System.Text.Json.Serialization.JsonPropertyName(\"{jsonName}\")]"
+                $"    [JsonPropertyName(\"{jsonName}\")]"
+        };
+    }
+
+    private static string PrependUsings(string output, GenerationOptions options)
+    {
+        return options.AttributeStyle switch
+        {
+            AttributeStyle.SystemTextJson =>
+                $"using System.Text.Json.Serialization;{Environment.NewLine}{Environment.NewLine}{output}",
+            AttributeStyle.Newtonsoft =>
+                $"using Newtonsoft.Json;{Environment.NewLine}{Environment.NewLine}{output}",
+            // AttributeStyle.None — no using needed, return output unchanged
+            _ => output
         };
     }
 }
