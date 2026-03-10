@@ -1,0 +1,27 @@
+services:
+  api:
+    build:
+      # The build context is the src/ folder because the Dockerfile references
+      # paths relative to it (the .sln file, all three .csproj files).
+      context: ./src
+      dockerfile: JsonToCsharp.API/Dockerfile
+    ports:
+      # ASP.NET Core inside the container listens on 8080 by default.
+      # We map that to 5000 on your local machine so you reach it at
+      # http://localhost:5000 — keeping it distinct from port 80 avoids
+      # conflicts with other local services.
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      # Nginx inside the container serves on port 80.
+      # We map it to port 4201 locally (not 4200) so it doesn't clash with
+      # `ng serve` if you ever run both simultaneously during development.
+      - "4201:80"
+    depends_on:
+      - api

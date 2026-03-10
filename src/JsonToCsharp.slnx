@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="JsonToCsharp.API/JsonToCsharp.API.csproj" />
+  <Project Path="JsonToCsharp.Engine/JsonToCsharp.Engine.csproj" />
+  <Project Path="JsonToCsharp.Tests/JsonToCsharp.Tests.csproj" />
+</Solution>

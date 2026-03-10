@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # Restore dependencies separately from build so that if restore fails
+      # (e.g. a NuGet package is unavailable) you get a clear, specific error
+      # rather than a generic build failure that's harder to diagnose.
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ./src
+
+      # --no-restore tells the build step to skip restore since we just did it.
+      # This avoids redundant work and makes the pipeline slightly faster.
+      - name: Build
+        run: dotnet build --no-restore
+        working-directory: ./src
+
+      # --no-build skips recompilation since we just built above.
+      # verbosity normal gives you enough output to see which tests passed
+      # and failed without drowning in compiler output.
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+        working-directory: ./src
