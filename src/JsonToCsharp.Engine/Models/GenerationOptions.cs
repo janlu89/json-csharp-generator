@@ -8,6 +8,7 @@ public class GenerationOptions
     public AttributeStyle AttributeStyle { get; set; } = AttributeStyle.SystemTextJson;
     public bool GenerateAsRecord { get; set; } = false;
     public bool UsePreciseTypes { get; set; } = false;
+    public string ArrayItemClassName { get; set; } = "Item";
 }
 
 public enum NamingConvention { PascalCase, CamelCase }
