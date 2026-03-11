@@ -9,7 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 // --- Dependency Injection ---
 builder.Services.AddSingleton<IJsonToCsharpConverter, JsonToCsharpConverter>();
 builder.Services.AddSingleton<ICsharpToJsonConverter, CsharpToJsonConverter>();
-builder.Services.AddHttpClient();
+
+builder.Services.AddHttpClient("fetchClient", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+    client.DefaultRequestHeaders.Add("User-Agent", "JsonCsharpGenerator/1.0");
+});
 
 // --- CORS ---
 builder.Services.AddCorsPolicy(builder.Configuration);
