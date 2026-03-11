@@ -1,0 +1,19 @@
+name: Keep Warm
+
+on:
+  schedule:
+    # Runs every 14 minutes — prevents Render.com free tier from spinning down
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # allows manual trigger from Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API health check
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://json-csharp-api.onrender.com/health)
+          echo "Health check response: $response"
+          if [ "$response" != "200" ]; then
+            echo "Warning: API returned $response"
+          fi
