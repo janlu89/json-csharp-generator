@@ -1,1 +1,16 @@
-<p>direction-toggle works!</p>
+<div class="direction-bar">
+  <div class="toggle-group">
+    <button
+      class="toggle-btn"
+      [class.active]="direction() === 'json-to-csharp'"
+      (click)="setDirection('json-to-csharp')">
+      JSON → C#
+    </button>
+    <button
+      class="toggle-btn"
+      [class.active]="direction() === 'csharp-to-json'"
+      (click)="setDirection('csharp-to-json')">
+      C# → JSON
+    </button>
+  </div>
+</div>

@@ -50,7 +50,7 @@ export class InputEditor implements AfterViewInit, OnDestroy, OnChanges {
       }
     });
   }
-  
+
   ngAfterViewInit() {
     this.initEditor();
 
@@ -78,36 +78,32 @@ export class InputEditor implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   // In InputEditor — update initEditor():
-private initEditor() {
-  const language = this.direction() === 'json-to-csharp'
-    ? json()
-    : javascript({ typescript: true });
+  private initEditor() {
+    const language = this.direction() === 'json-to-csharp'
+      ? json()
+      : javascript({ typescript: true });
 
-  const themeExtension = this.themeService.isDark() ? [oneDark] : [];
+    const themeExtension = this.themeService.isDark() ? [oneDark] : [];
 
-  this.editorView = new EditorView({
-    state: EditorState.create({
-      doc: '',
-      extensions: [
-        basicSetup,
-        language,
-        ...themeExtension,
-        EditorView.updateListener.of(update => {
-          if (update.docChanged) {
-            const value = update.state.doc.toString();
-            this.valueChange.emit(value);
-            this.inputSubject.next(value);
-          }
-        }),
-        EditorView.theme({
-          '&': { height: '100%' },
-          '.cm-scroller': { overflow: 'auto' }
-        })
-      ]
-    }),
-    parent: this.editorHost.nativeElement
-  });
-}
+    this.editorView = new EditorView({
+      state: EditorState.create({
+        doc: '',
+        extensions: [
+          basicSetup,
+          language,
+          ...themeExtension,
+          EditorView.updateListener.of(update => {
+            if (update.docChanged) {
+              const value = update.state.doc.toString();
+              this.valueChange.emit(value);
+              this.inputSubject.next(value);
+            }
+          })
+        ]
+      }),
+      parent: this.editorHost.nativeElement
+    });
+  }
 
   private reinitEditor() {
     const current = this.editorView?.state.doc.toString() ?? '';

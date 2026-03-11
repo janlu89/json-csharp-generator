@@ -1,1 +1,28 @@
-<p>history-panel works!</p>
+<div class="history-panel" [class.has-entries]="hasEntries()">
+  <div class="history-bar" (click)="togglePanel()">
+    <div class="history-bar-left">
+      <span class="history-label">History</span>
+      @if (hasEntries()) {
+        <span class="history-count">{{ entries().length }}</span>
+      }
+    </div>
+    @if (hasEntries()) {
+      <span class="chevron" [class.open]="isOpen()">›</span>
+    }
+    @if (!hasEntries()) {
+      <span class="history-empty-hint">No conversions yet</span>
+    }
+  </div>
+
+  <div class="history-drawer" [class.open]="isOpen()">
+    @for (entry of entries(); track entry.id) {
+      <div class="history-entry" (click)="selectEntry(entry)">
+        <div class="entry-meta">
+          <span class="entry-direction">{{ getDirectionLabel(entry.direction) }}</span>
+          <span class="entry-time">{{ entry.timestamp | date:'HH:mm:ss' }}</span>
+        </div>
+        <div class="entry-preview">{{ getPreview(entry.input) }}</div>
+      </div>
+    }
+  </div>
+</div>

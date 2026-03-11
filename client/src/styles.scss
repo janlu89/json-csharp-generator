@@ -15,7 +15,7 @@
   --text-secondary: #858585;
   --text-muted: #5a5a5a;
 
-  --accent: #4ec9b0;        // teal — distinctive, not the generic blue
+  --accent: #4ec9b0;
   --accent-hover: #3aab94;
   --accent-subtle: rgba(78, 201, 176, 0.12);
 
@@ -50,7 +50,6 @@
 
   // --- Layout ---
   --header-height: 52px;
-  --options-panel-height: 48px;
   --border-radius: 4px;
   --border-radius-lg: 8px;
 
@@ -59,8 +58,10 @@
   --transition-slow: 300ms ease;
 }
 
-// Light theme overrides — only the values that actually change.
-// Everything else inherits from :root automatically.
+// ============================================================
+// Light theme overrides
+// ============================================================
+
 body.light-theme {
   --bg-primary: #ffffff;
   --bg-secondary: #f3f3f3;
@@ -79,6 +80,10 @@ body.light-theme {
 
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+  --accent: #000000;
+  --accent-hover: #333333;
+  --accent-subtle: rgba(0, 0, 0, 0.06);
 }
 
 // ============================================================
@@ -93,7 +98,7 @@ body.light-theme {
 
 html, body {
   height: 100%;
-  overflow: hidden; // The app is a fixed viewport tool, no page scroll
+  overflow: hidden;
 }
 
 body {
@@ -108,7 +113,7 @@ body {
 }
 
 // ============================================================
-// Scrollbar styling — keeps the dark aesthetic consistent
+// Scrollbar styling
 // ============================================================
 
 ::-webkit-scrollbar {
@@ -267,6 +272,8 @@ body {
 // --- CodeMirror host ---
 .cm-host {
   flex: 1;
+  min-height: 0;
+  height: 100%;
   overflow: hidden;
 
   .cm-editor {
@@ -274,15 +281,4 @@ body {
     font-family: var(--font-ui);
     font-size: var(--font-size-base);
   }
-
-  .cm-scroller {
-    overflow: auto;
-  }
-}
-
-body.light-theme {
-    // Toggle pills use black text when active in light mode
-  --accent: #000000;
-  --accent-hover: #333333;
-  --accent-subtle: rgba(0, 0, 0, 0.06);
 }

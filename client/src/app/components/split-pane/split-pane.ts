@@ -4,18 +4,20 @@ import {
   signal,
   ViewChild,
   input,
+  output,
   effect
 } from '@angular/core';
 import { InputEditor } from '../input-editor/input-editor';
 import { OutputPanel } from '../output-panel/output-panel';
 import { OptionsPanel } from '../options-panel/options-panel';
+import { HistoryPanel, HistoryEntry } from '../history-panel/history-panel';
 import { ConversionService, DEFAULT_OPTIONS, GenerationOptions } from '../../services/conversion';
 import { ConversionDirection } from '../direction-toggle/direction-toggle';
 
 @Component({
   selector: 'app-split-pane',
   standalone: true,
-  imports: [InputEditor, OutputPanel, OptionsPanel],
+  imports: [InputEditor, OutputPanel, OptionsPanel, HistoryPanel],
   templateUrl: './split-pane.html',
   styleUrl: './split-pane.scss'
 })
@@ -30,6 +32,8 @@ export class SplitPane {
   currentInput = signal('');
   options = signal<GenerationOptions>({ ...DEFAULT_OPTIONS });
   autoConvert = signal(false);
+  history = signal<HistoryEntry[]>([]);
+  directionChange = output<ConversionDirection>();
 
   private suppressNextConvert = false;
   private conversionService = inject(ConversionService);
@@ -49,9 +53,13 @@ export class SplitPane {
   }
 
   onInputChange(value: string) {
-    this.currentInput.set(value);
-    if (this.errorMessage()) this.errorMessage.set('');
+  this.currentInput.set(value);
+  if (this.errorMessage()) this.errorMessage.set('');
+  if (!value.trim()) {
+    this.outputValue.set('');
+    this.errorMessage.set('');
   }
+}
 
   onConvert(value: string) {
     if (this.suppressNextConvert) return;
@@ -67,6 +75,19 @@ export class SplitPane {
     this.autoConvert.set(autoConvert);
   }
 
+  onHistorySelected(entry: HistoryEntry) {
+  if (entry.direction !== this.direction()) {
+    this.directionChange.emit(entry.direction);
+    setTimeout(() => {
+      this.outputValue.set(entry.output);
+      this.inputEditor?.setValue(entry.input);
+    }, 50);
+  } else {
+    this.outputValue.set(entry.output);
+    this.inputEditor?.setValue(entry.input);
+  }
+}
+
   private runConversion(input: string) {
     this.isLoading.set(true);
     this.errorMessage.set('');
@@ -81,6 +102,7 @@ export class SplitPane {
         this.isLoading.set(false);
         if (result.success) {
           this.outputValue.set(result.output ?? '');
+          this.addToHistory(input, result.output ?? '');
         } else {
           this.errorMessage.set(result.errorMessage ?? 'Conversion failed.');
         }
@@ -94,5 +116,18 @@ export class SplitPane {
         );
       }
     });
+  }
+
+  private addToHistory(input: string, output: string) {
+    const entry: HistoryEntry = {
+      id: crypto.randomUUID(),
+      direction: this.direction(),
+      input,
+      output,
+      timestamp: new Date()
+    };
+
+    // Cap history at 20 entries — oldest entries fall off the bottom
+    this.history.update(entries => [entry, ...entries].slice(0, 20));
   }
 }

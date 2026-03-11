@@ -23,4 +23,8 @@
         [errorMessage]="errorMessage()" />
     </div>
   </div>
+
+  <app-history-panel
+    [entries]="history()"
+    (entrySelected)="onHistorySelected($event)" />
 </div>

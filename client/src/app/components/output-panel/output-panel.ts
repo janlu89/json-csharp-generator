@@ -37,17 +37,17 @@ export class OutputPanel implements AfterViewInit, OnDestroy, OnChanges {
   hasOutput = () => !!this.outputValue();
   hasError = () => !!this.errorMessage();
 
-  private editorView?: EditorView;  
+  private editorView?: EditorView;
   private themeService = inject(ThemeService);
 
   constructor() {
-  effect(() => {
-    const _ = this.themeService.isDark(); // subscribe to theme signal
-    if (this.editorView) {
-      this.reinitEditor();
-    }
-  });
-}
+    effect(() => {
+      const _ = this.themeService.isDark(); // subscribe to theme signal
+      if (this.editorView) {
+        this.reinitEditor();
+      }
+    });
+  }
 
   ngAfterViewInit() {
     this.initEditor('');
@@ -65,31 +65,27 @@ export class OutputPanel implements AfterViewInit, OnDestroy, OnChanges {
   ngOnDestroy() {
     this.editorView?.destroy();
   }
-  
+
   private initEditor(content: string) {
-  const language = this.direction() === 'json-to-csharp'
-    ? javascript({ typescript: true })
-    : json();
+    const language = this.direction() === 'json-to-csharp'
+      ? javascript({ typescript: true })
+      : json();
 
-  const themeExtension = this.themeService.isDark() ? [oneDark] : [];
+    const themeExtension = this.themeService.isDark() ? [oneDark] : [];
 
-  this.editorView = new EditorView({
-    state: EditorState.create({
-      doc: content,
-      extensions: [
-        basicSetup,
-        language,
-        ...themeExtension,
-        EditorView.editable.of(false),
-        EditorView.theme({
-          '&': { height: '100%' },
-          '.cm-scroller': { overflow: 'auto' }
-        })
-      ]
-    }),
-    parent: this.outputHost.nativeElement
-  });
-}
+    this.editorView = new EditorView({
+      state: EditorState.create({
+        doc: content,
+        extensions: [
+          basicSetup,
+          language,
+          ...themeExtension,
+          EditorView.editable.of(false)
+        ]
+      }),
+      parent: this.outputHost.nativeElement
+    });
+  }
 
   private reinitEditor() {
     const current = this.editorView?.state.doc.toString() ?? '';
