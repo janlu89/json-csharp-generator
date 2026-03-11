@@ -17,9 +17,9 @@ internal static class NameSanitizer
         if (string.IsNullOrWhiteSpace(jsonName))
             return "_unknown";
 
-        var words = Regex.Split(jsonName, @"[-_\s\.]+")
-                         .Where(w => w.Length > 0)
-                         .ToArray();
+        var words = Regex.Split(jsonName, @"[-_\s\.]|(?<=[a-z])(?=[A-Z])")
+                 .Where(w => w.Length > 0)
+                 .ToArray();
 
         if (words.Length == 0)
             return "_unknown";

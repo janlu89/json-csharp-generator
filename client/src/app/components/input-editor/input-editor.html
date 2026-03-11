@@ -1,0 +1,19 @@
+<div class="input-container">
+  <div class="toolbar">
+    <span class="toolbar-label">
+      {{ direction() === 'json-to-csharp' ? 'JSON Input' : 'C# Input' }}
+    </span>
+    <div class="toolbar-actions">
+      <button class="toolbar-btn" (click)="clearEditor()">
+        Clear
+      </button>
+      <button
+        class="toolbar-btn primary"
+        (click)="triggerConversion()"
+        [disabled]="isEmpty()">
+        Convert
+      </button>
+    </div>
+  </div>
+  <div #editorHost class="cm-host"></div>
+</div>

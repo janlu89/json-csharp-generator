@@ -1,0 +1,48 @@
+<div class="output-container">
+  <div class="toolbar">
+    <span class="toolbar-label">
+      {{ direction() === 'json-to-csharp' ? 'C# Output' : 'JSON Output' }}
+    </span>
+    <div class="toolbar-actions">
+      @if (isLoading()) {
+        <span class="loading-indicator">
+          <span class="spinner"></span>
+          Converting...
+        </span>
+      }
+      @if (hasError()) {
+        <span class="error-badge">Error</span>
+      }
+      @if (hasOutput() && !isLoading()) {
+        <button
+          class="toolbar-btn"
+          [class.success]="copied()"
+          (click)="copyToClipboard()">
+          {{ copied() ? '✓ Copied' : 'Copy' }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="output-body">
+    <div #outputHost class="cm-host"></div>
+
+    @if (!hasOutput() && !isLoading() && !hasError()) {
+      <div class="empty-state">
+        <span class="empty-state-icon">→</span>
+        <span class="empty-state-text">
+          {{ direction() === 'json-to-csharp'
+            ? 'Paste JSON on the left to generate C# classes'
+            : 'Paste a C# class on the left to generate a JSON sample' }}
+        </span>
+      </div>
+    }
+
+    @if (hasError()) {
+      <div class="error-state">
+        <span class="error-icon">✕</span>
+        <span class="error-text">{{ errorMessage() }}</span>
+      </div>
+    }
+  </div>
+</div>

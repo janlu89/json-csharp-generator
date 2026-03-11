@@ -1,0 +1,26 @@
+<div class="split-pane-wrapper">
+  <app-options-panel
+    [direction]="direction()"
+    (optionsChange)="onOptionsChange($event)"
+    (autoConvertChange)="onAutoConvertChange($event)" />
+
+  <div class="split-pane">
+    <div class="pane pane-left">
+      <app-input-editor
+        [direction]="direction()"
+        [autoConvert]="autoConvert()"
+        (valueChange)="onInputChange($event)"
+        (convert)="onConvert($event)" />
+    </div>
+
+    <div class="pane-divider"></div>
+
+    <div class="pane pane-right">
+      <app-output-panel
+        [direction]="direction()"
+        [isLoading]="isLoading()"
+        [outputValue]="outputValue()"
+        [errorMessage]="errorMessage()" />
+    </div>
+  </div>
+</div>

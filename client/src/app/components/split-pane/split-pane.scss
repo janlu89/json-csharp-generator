@@ -1,0 +1,27 @@
+.split-pane-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+}
+
+.split-pane {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.pane {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.pane-divider {
+  width: 1px;
+  background-color: var(--border);
+  flex-shrink: 0;
+}
