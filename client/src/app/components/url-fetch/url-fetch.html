@@ -1,0 +1,40 @@
+@if (direction() === 'json-to-csharp') {
+  <div class="url-fetch">
+    <div class="url-bar" (click)="toggle()">
+      <div class="url-bar-left">
+        <span class="url-label">Fetch from URL</span>
+        @if (isOpen()) {
+          <span class="url-hint">Paste a URL that returns JSON</span>
+        }
+      </div>
+      <span class="chevron" [class.open]="isOpen()">›</span>
+    </div>
+
+    <div class="url-drawer" [class.open]="isOpen()">
+      <div class="url-input-row">
+        <input
+          class="url-input"
+          type="url"
+          placeholder="https://api.example.com/data.json"
+          [value]="url()"
+          (input)="onUrlInput($any($event.target).value)"
+          (keydown)="onKeydown($event)"
+          [disabled]="isLoading()" />
+        <button
+          class="toolbar-btn primary"
+          (click)="fetch()"
+          [disabled]="!url().trim() || isLoading()">
+          @if (isLoading()) {
+            <span class="spinner"></span>
+          } @else {
+            Fetch
+          }
+        </button>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="url-error">{{ errorMessage() }}</div>
+      }
+    </div>
+  </div>
+}

@@ -1,0 +1,173 @@
+<div class="options-panel">
+  <div class="options-bar" (click)="togglePanel()">
+    <div class="options-bar-left">
+      <span class="options-bar-label">Options</span>
+      @if (options().usePreciseTypes) {
+        <span class="pill accent">Precise Types</span>
+      }
+      @if (options().generateAsRecord) {
+        <span class="pill accent">Record</span>
+      }
+      @if (!options().useNullableReferenceTypes) {
+        <span class="pill accent">No Nullable</span>
+      }
+      @if (autoConvert()) {
+        <span class="pill accent">Auto-convert</span>
+      }
+    </div>
+    <div class="options-bar-right">
+      <span class="chevron" [class.open]="isOpen()">›</span>
+    </div>
+  </div>
+
+  <div class="options-drawer" [class.open]="isOpen()">
+    <div class="options-grid">
+
+      <div class="option-group">
+        <label class="option-label">Trigger</label>
+        <div class="toggle-row">
+          <button class="toggle-pill"
+            [class.active]="autoConvert()"
+            (click)="toggleAutoConvert()">
+            Auto
+          </button>
+          <button class="toggle-pill"
+            [class.active]="!autoConvert()"
+            (click)="toggleAutoConvert()">
+            Manual
+          </button>
+        </div>
+        <span class="option-hint">
+          {{ autoConvert()
+            ? 'Converts 800ms after you stop typing'
+            : 'Only converts on Convert button click' }}
+        </span>
+      </div>
+
+      @if (isJsonToCsharp()) {
+
+        <div class="option-group">
+          <label class="option-label">Type inference</label>
+          <div class="toggle-row">
+            <button class="toggle-pill"
+              [class.active]="!options().usePreciseTypes"
+              (click)="updateOption('usePreciseTypes', false)">
+              Simple
+            </button>
+            <button class="toggle-pill"
+              [class.active]="options().usePreciseTypes"
+              (click)="updateOption('usePreciseTypes', true)">
+              Precise
+            </button>
+          </div>
+          <span class="option-hint">
+            {{ options().usePreciseTypes
+              ? 'Detects DateTime, Guid, Uri from string values'
+              : 'Uses string, int, double — you refine types manually' }}
+          </span>
+        </div>
+
+        <div class="option-group">
+          <label class="option-label">Nullable types</label>
+          <div class="toggle-row">
+            <button class="toggle-pill"
+              [class.active]="options().useNullableReferenceTypes"
+              (click)="updateOption('useNullableReferenceTypes', true)">
+              On
+            </button>
+            <button class="toggle-pill"
+              [class.active]="!options().useNullableReferenceTypes"
+              (click)="updateOption('useNullableReferenceTypes', false)">
+              Off
+            </button>
+          </div>
+          <span class="option-hint">
+            {{ options().useNullableReferenceTypes
+              ? 'Emits string?, object? for nullable values'
+              : 'Omits ? — for projects without nullable context' }}
+          </span>
+        </div>
+
+        <div class="option-group">
+          <label class="option-label">Output type</label>
+          <div class="toggle-row">
+            <button class="toggle-pill"
+              [class.active]="!options().generateAsRecord"
+              (click)="updateOption('generateAsRecord', false)">
+              class
+            </button>
+            <button class="toggle-pill"
+              [class.active]="options().generateAsRecord"
+              (click)="updateOption('generateAsRecord', true)">
+              record
+            </button>
+          </div>
+          <span class="option-hint">
+            {{ options().generateAsRecord
+              ? 'Emits immutable record with init accessors'
+              : 'Emits standard mutable class with set accessors' }}
+          </span>
+        </div>
+
+        <div class="option-group">
+          <label class="option-label">Naming</label>
+          <div class="toggle-row">
+            <button class="toggle-pill"
+              [class.active]="options().namingConvention === 'PascalCase'"
+              (click)="updateOption('namingConvention', 'PascalCase')">
+              PascalCase
+            </button>
+            <button class="toggle-pill"
+              [class.active]="options().namingConvention === 'CamelCase'"
+              (click)="updateOption('namingConvention', 'CamelCase')">
+              camelCase
+            </button>
+          </div>
+          <span class="option-hint">
+            Property name convention in the generated C# class
+          </span>
+        </div>
+
+        <div class="option-group">
+          <label class="option-label">Attributes</label>
+          <div class="toggle-row">
+            <button class="toggle-pill"
+              [class.active]="options().attributeStyle === 'SystemTextJson'"
+              (click)="updateOption('attributeStyle', 'SystemTextJson')">
+              STJ
+            </button>
+            <button class="toggle-pill"
+              [class.active]="options().attributeStyle === 'Newtonsoft'"
+              (click)="updateOption('attributeStyle', 'Newtonsoft')">
+              Newtonsoft
+            </button>
+            <button class="toggle-pill"
+              [class.active]="options().attributeStyle === 'None'"
+              (click)="updateOption('attributeStyle', 'None')">
+              None
+            </button>
+          </div>
+          <span class="option-hint">
+            {{ options().attributeStyle === 'None'
+              ? 'No serialization attributes emitted'
+              : 'Emits [JsonPropertyName] for ' + options().attributeStyle }}
+          </span>
+        </div>
+
+        <div class="option-group">
+          <label class="option-label">Root class name</label>
+          <input
+            class="option-input"
+            type="text"
+            [value]="options().rootClassName"
+            (input)="updateOption('rootClassName', $any($event.target).value)"
+            placeholder="Root" />
+          <span class="option-hint">
+            Name of the top-level generated class
+          </span>
+        </div>
+
+      }
+    </div>
+  </div>
+</div>
