@@ -19,6 +19,9 @@ builder.Services.AddHttpClient("fetchClient", client =>
 // --- CORS ---
 builder.Services.AddCorsPolicy(builder.Configuration);
 
+// --- Health Checks ---
+builder.Services.AddHealthChecks();
+
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.Converters.Add(
@@ -29,6 +32,9 @@ var app = builder.Build();
 
 // --- Middleware ---
 app.UseCors("AllowedOrigins");
+
+// --- Health Check Endpoint ---
+app.MapHealthChecks("/health");
 
 // --- Endpoints ---
 app.MapConversionEndpoints();
